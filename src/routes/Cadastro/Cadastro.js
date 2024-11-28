@@ -10,8 +10,7 @@ import { Link } from "react-router-dom";
 
 export default function Cadastro() {
   return (
-    <div className="container">
-       
+    <div className="container"> 
         <div className="containerMain">
             <div className="containerImage">
                 <img className="cultureImage" src={culture} alt="Imagem de Login" />
