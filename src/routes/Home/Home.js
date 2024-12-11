@@ -6,13 +6,14 @@ import logo from "../../assets/images/image_logo.png";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Menu from "../../components/Menu/Menu"; 
-
+import Main from "../../components/Main/Main";
 export default function Home() {
 
     return(
         <nav>
             <Header/>
             <Menu/>
+            <Main/>
         </nav>
        
     )

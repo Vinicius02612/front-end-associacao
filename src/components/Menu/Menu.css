@@ -2,35 +2,73 @@
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
-    color: black;
+
 
     width: 250px;
-    height: 85vh;
-}
+    height: 100vh;
 
-.Menu .containMenu{
-    margin: 10px;
-    height: 100%;
-
+    position: fixed;
+    border-right: 1px solid #ddd;
+    left: 0;
+    overflow-y: auto;
+    padding-top: 20px;
     display: flex;
-    flex-direction: column;
 
-    
+    font-family: Poppins, sans-serif;
+   
+
 }
-
-.Menu .containMenu .ul{
-
+.sidebar{
     margin-top: 50px;
-    background-color: aqua;
 }
 
+.sidebar a {
+    text-decoration: none;
+    color: #333;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border: 1px solid #f0f0f0;
 
-.Menu .containMenu .ul li{
-    list-style: none;
-    background-color: #F2F2F2;
-    color: black;
-    cursor: pointer;
+}
+
+.sidebar a  .icons{
+   margin-right: 10px;
+
+}
+
+.sidebar a:hover {
+    background-color: #f0f0f0;
+}
+
+.sidebar .submenu {
+    display: none; /* Submenu inicialmente oculto */
+    flex-direction: column;
     padding-left: 20px;
+    background-color: #f9f9f9;
+}
 
-    height: 50px;
+.sidebar .submenu a {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-bottom: none;
+}
+.sidebar .menu-item:hover .submenu {
+    display: flex; /* Mostra o submenu ao passar o mouse */
+}
+
+.sidebar .submenu a:hover {
+    background-color: #e6e6e6;
+
+
+}
+
+.sidebar .menu-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.sidebar .menu-item.active > .submenu {
+    /* Submenu visível quando o menu está ativo */
 }
