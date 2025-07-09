@@ -1,7 +1,7 @@
 import BaseController from "./baseController";
 
 export default class ProjectsController {
-	urlBase = "https://sistema-da-associacao.onrender.com/projetos";
+	urlBase = "/projetos/";
 
 	constructor() {
 		this.base = new BaseController(this.userStore);
