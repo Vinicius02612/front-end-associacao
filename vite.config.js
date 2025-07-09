@@ -12,6 +12,17 @@ const renderAppHostname = process.env.VITE_RENDER_APP_HOSTNAME || 'sistema-da-as
 export default defineConfig({
   plugins: [
     vue(),
+    vuetify({
+      load: {
+        pattern: ['**/*.vue', '**/*.js'],
+      },
+      styles: {
+        configFile: 'src/styles/settings.scss',
+      },
+      compilerOptions: {},
+      autoImport: true,
+      importComposables: true,
+    })
   ],
   resolve: {
     alias: {
@@ -28,11 +39,15 @@ export default defineConfig({
       allow: ['.', '/'], // Permite acesso à raiz do projeto e do sistema de arquivos
       strict: false // Desativa verificações de segurança de caminho (usar com cautela)
     },
-    // O '*' aqui significa que qualquer host é permitido.
-    // Isso é o mais permissivo possível para `server.allowedHosts` que o erro sugere.
-    // Note: 'allowedHosts' não é uma propriedade direta de `server`, mas é um conceito.
-    // `host: '0.0.0.0'` geralmente cuida disso, mas o erro insiste.
-    // Podemos tentar adicionar uma HMR mais permissiva se estiver relacionada.
+    // **AQUI ESTÁ A MUDANÇA PRINCIPAL:**
+    // Adicione o hostname da sua aplicação de produção à lista de allowedHosts.
+    allowedHosts: [
+      'front-end-associacao-production.up.railway.app',
+      // Se você tiver outros domínios ou subdomínios, adicione-os aqui também.
+      // Por exemplo, se você estiver usando localhost para desenvolvimento:
+      'localhost',
+      '127.0.0.1'
+    ],
     hmr: {
       host: 'front-end-associacao-production.up.railway.app', // Especifique o host exato para HMR
       protocol: 'wss' // Use wss para HTTPS, ws para HTTP
