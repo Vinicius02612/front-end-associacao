@@ -3,7 +3,7 @@ import { useUserStore } from "@/stores/user.store";
 
 export default class UserController {
 	userStore = useUserStore();
-	urlBase = "https://sistema-da-associacao.onrender.com/users";
+	urlBase = "/users";
 
 	constructor() {
 		this.base = new BaseController(this.userStore);
