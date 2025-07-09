@@ -7,7 +7,7 @@ export class BaseController {
 
   constructor(userStore) {
     this.UserStore = userStore;
-    this.url = API_URL;
+    this.url = "https://sistema-da-associacao.onrender.com";
   }
 
   urlFull(uri) {
