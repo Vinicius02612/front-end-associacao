@@ -34,7 +34,7 @@ export default defineConfig({
     // `host: '0.0.0.0'` geralmente cuida disso, mas o erro insiste.
     // Podemos tentar adicionar uma HMR mais permissiva se estiver relacionada.
     hmr: {
-      host: 'frontend-m8bu.onrender.com', // Especifique o host exato para HMR
+      host: 'front-end-associacao-production.up.railway.app', // Especifique o host exato para HMR
       protocol: 'wss' // Use wss para HTTPS, ws para HTTP
     },
   },
