@@ -123,7 +123,7 @@
 									<v-btn
 										width="32"
 										height="32"
-										@click="deleteSocio(item.Id)"
+										@click="confirmDelete(item.Id, item.Nome)"
 									>
 										<v-tooltip
 											activator="parent"
@@ -276,6 +276,25 @@
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
+
+	<!-- Confirmation Dialog for Deletion -->
+	<v-dialog v-model="confirmDialog" max-width="500px">
+		<v-card>
+			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
+			<v-card-text>
+				Tem certeza que deseja bloquear o sócio <strong>{{ userToDelete.name }}</strong>?
+				<br><br>
+				<v-alert color="warning" variant="outlined" class="mt-3">
+					Esta ação não pode ser desfeita.
+				</v-alert>
+			</v-card-text>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
+				<v-btn color="red" @click="deleteSocio(userToDelete.id); confirmDialog = false">Confirmar</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script>
@@ -301,6 +320,8 @@ export default {
 								search: "",
 						},
 						dialog: false, // For the edit dialog
+						confirmDialog: false, // For the delete confirmation dialog
+						userToDelete: { id: null, name: '' }, // Store user info for deletion confirmation
 						editLoading: false, // To manage loading state when editing
 						userToEdit: {
 							Id: '', // To hold the ID of the user being edited
@@ -455,6 +476,10 @@ export default {
 						}
 						
 				},
+				confirmDelete(id, name) {
+					this.userToDelete = { id, name };
+					this.confirmDialog = true;
+				},
 				async deleteSocio(id){
 						// Implement the logic to delete a socio
 						try {
@@ -469,10 +494,18 @@ export default {
 										this.loadSocios(); // Reload the list of socios after deletion
 								}
 						} catch (error) {
-								statusCode.toastError({
+								// Check if it's a CORS error
+								if (error.message && error.message.includes('CORS')) {
+									statusCode.toastError({
+										status: 500,
+										statusText: 'Erro de CORS: O servidor precisa ser configurado para permitir requisições deste domínio',
+									});
+								} else {
+									statusCode.toastError({
 										status: error.response ? error.response.status : 500,
 										statusText: error.message || 'Erro ao excluir sócio',
-								});
+									});
+								}
 						}
 				},
 				async confirmEdition(id) {
