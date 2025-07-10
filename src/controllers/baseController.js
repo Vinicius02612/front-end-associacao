@@ -7,11 +7,37 @@ export class BaseController {
 
   constructor(userStore) {
     this.UserStore = userStore;
-    this.url = "https://sistema-da-associacao.onrender.com";
+    
+    // Garantir que sempre use HTTPS
+    let baseUrl = "https://sistema-da-associacao.onrender.com";
+    
+    // Se houver uma variável de ambiente, use ela mas force HTTPS
+    if (import.meta.env.VITE_API_URL) {
+      baseUrl = import.meta.env.VITE_API_URL;
+      // Força HTTPS se a URL estiver usando HTTP
+      if (baseUrl.startsWith('http://')) {
+        baseUrl = baseUrl.replace('http://', 'https://');
+        console.warn('Forçando HTTPS para a API URL:', baseUrl);
+      }
+    }
+    
+    this.url = baseUrl;
+    
+    // Log para debug
+    console.log('BaseController URL configurada:', this.url);
   }
 
   urlFull(uri) {
-    return `${this.url}${uri}`;
+    const fullUrl = `${this.url}${uri}`;
+    
+    // Verificação extra: se a URL completa ainda estiver usando HTTP, force HTTPS
+    if (fullUrl.startsWith('http://')) {
+      const httpsUrl = fullUrl.replace('http://', 'https://');
+      console.warn('Forçando HTTPS para a URL completa:', httpsUrl);
+      return httpsUrl;
+    }
+    
+    return fullUrl;
   }
 
   getHeaders(isForm = false) {
@@ -64,9 +90,20 @@ export class BaseController {
     } catch (error) {
       const retryInfo = retry || [uri, method, body, isForm];
 
-      // Check for CORS error
-      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-        const corsError = new Error('CORS Error: O servidor precisa configurar as políticas CORS para permitir requisições deste domínio');
+      // Check for CORS error - melhor detecção
+      if (error.name === 'TypeError' && (
+        error.message.includes('Failed to fetch') ||
+        error.message.includes('NetworkError') ||
+        error.message.includes('CORS')
+      )) {
+        console.error('CORS Error Details:', {
+          url: url,
+          method: method,
+          headers: options.headers,
+          error: error.message
+        });
+        
+        const corsError = new Error(`CORS Error: O servidor backend (${this.url}) precisa configurar as políticas CORS para permitir requisições do domínio ${window.location.origin}`);
         corsError.isCorsError = true;
         throw corsError;
       }
