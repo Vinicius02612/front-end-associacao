@@ -280,7 +280,7 @@
 			<v-card-actions>
 				<v-spacer></v-spacer>
 				<v-btn color="grey" @click="editDialog = false">Cancelar</v-btn>
-				<v-btn color="primary" @click="confirmEdit" :loading="editLoading">Confirmar Edição</v-btn>
+				<v-btn color="primary" @click="confirmEdition(projetoToEdit.id)" :loading="editLoading">Confirmar Edição</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>	
@@ -458,7 +458,7 @@ export default {
 				this.editLoading = false; // Reset loading state
 			}
 		},
-		async confirmEdit() {
+		async confirmEdit(id) {
 			// Implement the logic to confirm the edition of a project
 			const payload = {
 				titulo: this.projetoToEdit.Titulo,
@@ -468,7 +468,7 @@ export default {
 			};
 			console.log('Payload para edição:', payload);
 			
-			await projectsControler.updateProject(this.projetoToEdit.id, payload)
+			await projectsControler.updateProject(id, payload)
 			.then(response => {
 				statusCode.toastSuccess({
 					status: response.status,
