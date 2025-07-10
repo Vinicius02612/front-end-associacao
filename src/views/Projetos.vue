@@ -156,7 +156,7 @@
 		<v-card>
 			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
 			<v-card-text>
-				Tem certeza que deseja remover o projeto <strong>{{ projetoToDelete.titulo }}</strong>?
+				Tem certeza que deseja remover o projeto <strong>{{ projetoToDelete.name }}</strong>?
 				<br><br>
 				<v-alert color="warning" variant="outlined" class="mt-3">
 					Esta ação não pode ser desfeita.
@@ -192,7 +192,7 @@ export default {
 				search: "",
 			},
 			confirmDialog: false, // For the delete confirmation dialog
-			projetoToDelete: { id: null, titulo: '' }, // Store user info for deletion confirmation
+			projetoToDelete: { id: null, name: '' }, // Store user info for deletion confirmation
 		};
 	},
 	async mounted(){
@@ -285,20 +285,22 @@ export default {
             const year = date.getFullYear();
             return `${day}/${month}/${year}`;
         },
-		confirmDelete(id, titulo) {
-			this.projetoToDelete = { id, titulo };
+		confirmDelete(id, name) {
+			this.projetoToDelete = { id, name };
 			this.confirmDialog = true;
 		},
 		async deleteProjeto(id) {
 			try {
-				const response = await projectsControler.deleteProject(id);
+				const response = await projectsControler.deleteProject(id).them((response) =>{
+					return response;
+				});
 				if (response.status === 200) {
-					 // Recarrega a lista de projetos após a exclusão
+					this.loadProjetos(); // Recarrega a lista de projetos após a exclusão
+					this.confirmDialog = false; // Fecha o diálogo de confirmação
 					statusCode.toastSuccess({
 						status: response.status,
 						statusText: 'Projeto excluído com sucesso',
 					});
-					this.loadProjetos();
 				} else {
 					statusCode.toastError({
 						status: response.status,
