@@ -123,11 +123,12 @@
 									<v-btn
 										width="32"
 										height="32"
+										@click="deleteSocio(item.Id)"
 									>
 										<v-tooltip
 											activator="parent"
 											location="bottom"
-											@click="deleteSocio(item.Id)"
+											
 										>
 											Bloquear
 										</v-tooltip>
