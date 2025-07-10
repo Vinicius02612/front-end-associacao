@@ -282,7 +282,7 @@
 		<v-card>
 			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
 			<v-card-text>
-				Tem certeza que deseja bloquear o sócio <strong>{{ userToDelete.name }}</strong>?
+				Tem certeza que deseja remover o sócio <strong>{{ userToDelete.name }}</strong>?
 				<br><br>
 				<v-alert color="warning" variant="outlined" class="mt-3">
 					Esta ação não pode ser desfeita.

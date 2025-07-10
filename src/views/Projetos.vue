@@ -156,7 +156,7 @@
 		<v-card>
 			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
 			<v-card-text>
-				Tem certeza que deseja remover o projeto <strong>{{ projetoToDelete.title }}</strong>?
+				Tem certeza que deseja remover o projeto <strong>{{ projetoToDelete.titulo }}</strong>?
 				<br><br>
 				<v-alert color="warning" variant="outlined" class="mt-3">
 					Esta ação não pode ser desfeita.
@@ -165,7 +165,7 @@
 			<v-card-actions>
 				<v-spacer></v-spacer>
 				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
-				<v-btn color="red" @click="deleteProjeto(userToDelete.id); confirmDialog = false">Confirmar</v-btn>
+				<v-btn color="red" @click="deleteProjeto(projetoToDelete.id); confirmDialog = false">Confirmar</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>	
@@ -192,7 +192,7 @@ export default {
 				search: "",
 			},
 			confirmDialog: false, // For the delete confirmation dialog
-			userToDelete: { id: null, name: '' }, // Store user info for deletion confirmation
+			projetoToDelete: { id: null, titulo: '' }, // Store user info for deletion confirmation
 		};
 	},
 	async mounted(){
