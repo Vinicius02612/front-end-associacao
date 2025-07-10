@@ -415,163 +415,78 @@ export default {
 			this.confirmDialog = true;
 		},
 		async editProjeto(id) {
-			this.editLoading = true;
+			this.editLoading = true; // Set loading state to true
+			// Implement the logic to edit a project
 			try {
-				// Primeiro, tenta buscar da API
-				let projeto = null;
-				
-				try {
-					const response = await projectsControler.getProject(id);
-					if (response.status === 200) {
-						projeto = response.body;
-					}
-				} catch (apiError) {
-					console.warn('Não foi possível buscar projeto da API, usando dados locais:', apiError);
-					// Se falhar, busca dos dados locais
-					projeto = this.projetos.find(p => p.id === id);
-					if (!projeto) {
-						throw new Error('Projeto não encontrado');
-					}
-					// Converte os dados locais para o formato esperado
-					projeto = {
-						id: projeto.id,
-						titulo: projeto.Titulo,
-						dtinicio: projeto.dataInicio,
-						dtfim: projeto.dataFim,
-						status: projeto.status
-					};
-				}
-				
-				if (projeto) {
-					this.projetoToEdit.id = projeto.id;
-					this.projetoToEdit.Titulo = projeto.titulo || projeto.Titulo;
+				const response = await projectsControler.getProject(id).then((response) => {
+					return response;
+				});
+				if (response.status === 200) {
+					console.log('Projeto carregado com sucesso:', response.body);
+					this.projetoToEdit.id = response.body?.id || '';
+					this.projetoToEdit.Titulo = response.body?.titulo || '';
 					
 					// Parse data de início
-					let dataInicio = projeto.dtinicio || projeto.dataInicio;
-					if (dataInicio) {
-						// Se a data está no formato ISO (YYYY-MM-DD)
-						if (dataInicio.includes('-') && dataInicio.length === 10) {
-							const [year, month, day] = dataInicio.split("-");
-							this.projetoToEdit.dataInicio = {
-								day: day || '',
-								month: month || '',
-								year: year || ''
-							};
-						} else {
-							// Se a data está em outro formato, tenta converter
-							const date = new Date(dataInicio);
-							if (!isNaN(date.getTime())) {
-								this.projetoToEdit.dataInicio = {
-									day: String(date.getDate()).padStart(2, '0'),
-									month: String(date.getMonth() + 1).padStart(2, '0'),
-									year: String(date.getFullYear())
-								};
-							} else {
-								this.projetoToEdit.dataInicio = { day: '', month: '', year: '' };
-							}
-						}
-					} else {
-						this.projetoToEdit.dataInicio = { day: '', month: '', year: '' };
+					if (response.body.dtinicio) {
+						const [year, month, day] = response.body.dtinicio.split("-");
+						this.projetoToEdit.dataInicio = {
+							day: day || '',
+							month: month || '',
+							year: year || ''
+						};
 					}
 					
 					// Parse data de fim
-					let dataFim = projeto.dtfim || projeto.dataFim;
-					if (dataFim) {
-						// Se a data está no formato ISO (YYYY-MM-DD)
-						if (dataFim.includes('-') && dataFim.length === 10) {
-							const [year, month, day] = dataFim.split("-");
-							this.projetoToEdit.dataFim = {
-								day: day || '',
-								month: month || '',
-								year: year || ''
-							};
-						} else {
-							// Se a data está em outro formato, tenta converter
-							const date = new Date(dataFim);
-							if (!isNaN(date.getTime())) {
-								this.projetoToEdit.dataFim = {
-									day: String(date.getDate()).padStart(2, '0'),
-									month: String(date.getMonth() + 1).padStart(2, '0'),
-									year: String(date.getFullYear())
-								};
-							} else {
-								this.projetoToEdit.dataFim = { day: '', month: '', year: '' };
-							}
-						}
-					} else {
-						this.projetoToEdit.dataFim = { day: '', month: '', year: '' };
+					if (response.body.dtfim) {
+						const [year, month, day] = response.body.dtfim.split("-");
+						this.projetoToEdit.dataFim = {
+							day: day || '',
+							month: month || '',
+							year: year || ''
+						};
 					}
 					
-					this.projetoToEdit.status = projeto.status || 'Em andamento';
-					this.editDialog = true;
-				} else {
-					throw new Error('Projeto não encontrado');
+					this.projetoToEdit.status = response.body?.status || 'Em andamento';
 				}
+				this.editDialog = true; // Open the dialog for editing
 			} catch (error) {
 				statusCode.toastError({
 					status: error.response ? error.response.status : 500,
 					statusText: error.message || 'Erro ao carregar projeto para edição',
 				});
 			} finally {
-				this.editLoading = false;
+				this.editLoading = false; // Reset loading state
 			}
 		},
 		async confirmEdit() {
-			this.editLoading = true;
-			try {
-				const payload = {
-					titulo: this.projetoToEdit.Titulo,
-					dtinicio: `${this.projetoToEdit.dataInicio.year}-${String(this.projetoToEdit.dataInicio.month).padStart(2, '0')}-${String(this.projetoToEdit.dataInicio.day).padStart(2, '0')}`,
-					dtfim: `${this.projetoToEdit.dataFim.year}-${String(this.projetoToEdit.dataFim.month).padStart(2, '0')}-${String(this.projetoToEdit.dataFim.day).padStart(2, '0')}`,
-					status: this.projetoToEdit.status
-				};
-
-				console.log('Payload para edição:', payload);
-				console.log('ID do projeto:', this.projetoToEdit.id);
-
-				const response = await projectsControler.updateProject(this.projetoToEdit.id, payload);
-
-				if (response.status === 200) {
-					statusCode.toastSuccess({
-						status: response.status,
-						statusText: 'Projeto editado com sucesso',
-					});
-					this.editDialog = false;
-					this.loadProjetos(); // Recarregar lista
-				} else {
-					statusCode.toastError({
-						status: response.status,
-						statusText: 'Erro ao editar projeto',
-					});
-				}
-			} catch (error) {
-				console.error('Erro ao editar projeto:', error);
-				
-				if (error.message && error.message.includes('CORS')) {
-					statusCode.toastError({
-						status: 500,
-						statusText: 'Erro de CORS: O servidor precisa ser configurado para permitir requisições deste domínio',
-					});
-				} else if (error.response && error.response.status === 404) {
-					statusCode.toastError({
-						status: 404,
-						statusText: 'Projeto não encontrado. Ele pode ter sido removido por outro usuário.',
-					});
-				} else if (error.response && error.response.status === 400) {
-					statusCode.toastError({
-						status: 400,
-						statusText: 'Dados inválidos. Verifique se todas as informações estão corretas.',
-					});
-				} else {
-					statusCode.toastError({
-						status: error.response ? error.response.status : 500,
-						statusText: error.message || 'Erro ao editar projeto',
-					});
-				}
-			} finally {
-				this.editLoading = false;
-				this.editDialog = false;
-			}
+			// Implement the logic to confirm the edition of a project
+			const payload = {
+				titulo: this.projetoToEdit.Titulo,
+				dtinicio: `${this.projetoToEdit.dataInicio.year}-${String(this.projetoToEdit.dataInicio.month).padStart(2, '0')}-${String(this.projetoToEdit.dataInicio.day).padStart(2, '0')}`,
+				dtfim: `${this.projetoToEdit.dataFim.year}-${String(this.projetoToEdit.dataFim.month).padStart(2, '0')}-${String(this.projetoToEdit.dataFim.day).padStart(2, '0')}`,
+				status: this.projetoToEdit.status
+			};
+			console.log('Payload para edição:', payload);
+			
+			await projectsControler.updateProject(this.projetoToEdit.id, payload)
+			.then(response => {
+				statusCode.toastSuccess({
+					status: response.status,
+					statusText: "Projeto editado com sucesso",
+				});
+				this.editDialog = false; // Close the dialog
+				this.loadProjetos(); // Reload the list of projects
+			})
+			.catch(error => {
+				statusCode.toastError({
+					status: error.response ? error.response.status : 500,
+					statusText: error.message || 'Erro ao editar projeto',
+				});
+			}).finally(() => {
+				this.editLoading = false; // Reset loading state after the operation
+				this.editDialog = false; // Close the dialog after editing
+			});
+			await this.loadProjetos(); // Reload the list of projects to reflect changes
 		},
 		async deleteProjeto(id) {
 			try {
