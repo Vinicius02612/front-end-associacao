@@ -3,7 +3,7 @@ import BaseController from "./baseController";
 
 export default class AuthService {
 	userStore = useUserStore()
-  urlBase = "/login";
+  urlBase = "/login/";
 
   constructor() {
     this.base = new BaseController(this.userStore);
@@ -19,11 +19,11 @@ export default class AuthService {
 	}
 
   async register(data) {
-		return await this.base._post(`${this.urlBase}/register`, data)
+		return await this.base._post(`${this.urlBase}register`, data)
   }
 
   async login(data) {
-    return this.base._post(`${this.urlBase}/auth`, data, true);
+    return this.base._post(`${this.urlBase}auth`, data, true);
   }
 
   async logout() {
@@ -31,7 +31,7 @@ export default class AuthService {
     const body = {
       refreshToken: tokens.refresh.token,
     };
-    const response = await this.base._post(`${this.urlBase}/logout`, body);
+    const response = await this.base._post(`${this.urlBase}logout`, body);
     if (response.status === 204) {
       localStorage.removeItem("token");
       localStorage.removeItem("refresh-token");

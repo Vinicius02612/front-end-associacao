@@ -3,7 +3,7 @@ import { useUserStore } from "@/stores/user.store";
 
 export default class AccountController {
   userStore = useUserStore();
-  urlBase = "/accounts";
+  urlBase = "/accounts/";
 
   constructor() {
     this.base = new BaseController(this.userStore);
@@ -20,18 +20,18 @@ export default class AccountController {
   }
 
   async getAccountById(accountId) {
-    const response = await this.base._get(`${this.urlBase}/${accountId}`);
+    const response = await this.base._get(`${this.urlBase}${accountId}`);
     return response.body;
   }
 
   async deleteAccountById(accountId) {
-    const response = await this.base._delete(`${this.urlBase}/${accountId}`);
+    const response = await this.base._delete(`${this.urlBase}${accountId}`);
     return response.body;
   }
 
   async updateAccountById(accountId, data) {
     const response = await this.base._patch(
-      `${this.urlBase}/${accountId}`,
+      `${this.urlBase}${accountId}`,
       data
     );
     return response.body;
@@ -39,35 +39,35 @@ export default class AccountController {
 
   async restartAccount(accountId) {
     const response = await this.base._put(
-      `${this.urlBase}/${accountId}/restart`
+      `${this.urlBase}/${accountId}restart`
     );
     return response.body;
   }
 
   async reloadAccount(accountId) {
     const response = await this.base._put(
-      `${this.urlBase}/${accountId}/reload`
+      `${this.urlBase}/${accountId}reload`
     );
     return response.body;
   }
 
   async refreshAccount(accountId) {
     const response = await this.base._put(
-      `${this.urlBase}/${accountId}/refresh`
+      `${this.urlBase}/${accountId}refresh`
     );
     return response.body;
   }
 
   async disconnectAccount(accountId) {
     const response = await this.base._put(
-      `${this.urlBase}/${accountId}/disconnect`
+      `${this.urlBase}/${accountId}disconnect`
     );
     return response.body;
   }
 
   async runCode(accountId, data) {
     const response = await this.base._post(
-      `${this.urlBase}/${accountId}/run`,
+      `${this.urlBase}/${accountId}run`,
       data
     );
     return response.body;
