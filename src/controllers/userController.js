@@ -18,15 +18,15 @@ export default class UserController {
   }
 
   async getUser(id) {
-    return await this.base._get(`${this.urlBase}/${id}`);
+    return await this.base._get(`${this.urlBase}${id}`);
   }
 
   async updateUser(id, body) {
-    return await this.base._put(`${this.urlBase}/${id}`, body);
+    return await this.base._put(`${this.urlBase}${id}`, body);
   }
 
   async deleteUser(id) {
-    return await this.base._delete(`${this.urlBase}/${id}`);
+    return await this.base._delete(`${this.urlBase}${id}`);
   }
 
   async generateApiKey() {
