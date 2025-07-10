@@ -132,6 +132,7 @@
 									<v-btn
 										width="32"
 										height="32"
+										@click="confirmDelete(item.Id, item.Nome)"
 									>
 										<v-tooltip
 											activator="parent"
@@ -149,7 +150,25 @@
 			</v-col>
 			
 		</v-row>
-	</v-container>	
+	</v-container>
+	<!-- Confirmation Dialog for Deletion -->
+	<v-dialog v-model="confirmDialog" max-width="500px">
+		<v-card>
+			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
+			<v-card-text>
+				Tem certeza que deseja remover o projeto <strong>{{ projetoToDelete.title }}</strong>?
+				<br><br>
+				<v-alert color="warning" variant="outlined" class="mt-3">
+					Esta ação não pode ser desfeita.
+				</v-alert>
+			</v-card-text>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
+				<v-btn color="red" @click="deleteProjeto(userToDelete.id); confirmDialog = false">Confirmar</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>	
 </template>
 
 <script>
@@ -171,7 +190,9 @@ export default {
 			filters: {
 				selected: "all",
 				search: "",
-				},
+			},
+			confirmDialog: false, // For the delete confirmation dialog
+			userToDelete: { id: null, name: '' }, // Store user info for deletion confirmation
 		};
 	},
 	async mounted(){
@@ -263,7 +284,34 @@ export default {
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês é 0-indexed
             const year = date.getFullYear();
             return `${day}/${month}/${year}`;
-        }
+        },
+		confirmDelete(id, name) {
+			this.userToDelete = { id, name };
+			this.confirmDialog = true;
+		},
+		async deleteProjeto(id) {
+			try {
+				const response = await projectsControler.deleteProject(id);
+				if (response.status === 200) {
+					 // Recarrega a lista de projetos após a exclusão
+					statusCode.toastSuccess({
+						status: response.status,
+						statusText: 'Projeto excluído com sucesso',
+					});
+					this.loadProjetos();
+				} else {
+					statusCode.toastError({
+						status: response.status,
+						statusText: 'Erro ao excluir o projeto',
+					});
+				}
+			} catch (error) {
+				statusCode.toastError({
+					status: error.response ? error.response.status : 500,
+					statusText: error.message || 'Erro ao excluir o projeto',
+				});
+			}
+		},
 	},
 	watch: {
 		"filters.search"() {
