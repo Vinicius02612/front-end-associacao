@@ -49,7 +49,7 @@
 								class="ma-1 d-flex align-center"
 								color="primary"
 								variant="outlined"
-								@click="filters.selected = false, filterMesnalidades()"
+								@click="filters.selected = 'ok', filterMesnalidades()"
 							>
 								<v-tooltip
 									activator="parent"
@@ -63,7 +63,7 @@
 								class="ma-1 d-flex align-center"
 								variant="outlined"
 								color="red"
-								@click="filters.selected = true, filterMesnalidades()"
+								@click="filters.selected = 'atrasada', filterMesnalidades()"
 							>
 								<v-tooltip
 									activator="parent"
@@ -121,16 +121,16 @@
 								>
 								<td>{{ item.Titular }}</td>
 								<td>{{ item.CPF }}</td>
-								<td><DateLabel :date="new Date(item.DataNascimento)" /> </td>
+								<td><DateLabel :date="new Date(item.DataVencimento)" /> </td>
 								<td>{{ item.Cargo }}</td>
 								<td>R$ {{ item.valor.toFixed(2) }}</td>
 								<td>
 									<v-chip
-									:color="item.EmAtraso ? 'red' : 'green'"
+									:color="item.status === 'Atrasada' ? 'red' : 'green'"
 									class="chip-size d-flex justify-center"
 									variant="outlined"
 									>
-									{{ item.EmAtraso ? 'Atrasada' : 'Em Dia' }}
+									{{ item.status}}
 								</v-chip>
 							</td>
 							<!-- <td>
@@ -204,6 +204,10 @@ export default {
 				selected: "all",
 				search: "",
 				},
+			Status: [
+				{ text: 'Em Dia', value: 'ok' },
+				{ text: 'Atrasada', value: 'atrasada' },
+			],
 			ruleRequired,
 		};
 	},
@@ -240,14 +244,17 @@ export default {
 				this.Mensalidades = await monthlyController.getMonthlys()
 				.then((response) => {
 					if (response.status === 200) {
+
+						const hoje = new Date();
 						const createData = response.body.map((item) => {
 							item.User = this.users.find(user => user.id === item.iduser) || {};
 							return {
 								...item,
 								Titular: item.User?.name || "Desconhecido",
 								CPF: item.User?.cpf || "N/A",
-								DataNascimento: item.User?.data_nascimento || "N/A",
+								DataVencimento: item.dtvencimento|| "N/A",
 								Cargo: item.User?.cargo || "N/A",
+								status: hoje > new Date(item.dtvencimento) ? "Atrasada" : "Em Dia",
 							};
 						});
 						console.log("Mensalidades", createData);
@@ -265,11 +272,11 @@ export default {
 				case "all":
 					this.MensalidadesFiltered = this.Mensalidades;
 					break;
-				case true:
-					this.MensalidadesFiltered = this.Mensalidades.filter((item) => item.EmAtraso);
+				case 'ok':
+					this.MensalidadesFiltered = this.Mensalidades.filter((item) => item.status === "Em Dia");
 					break;
-				case false:
-					this.MensalidadesFiltered = this.Mensalidades.filter((item) => !item.EmAtraso);
+				case 'atrasada':
+					this.MensalidadesFiltered = this.Mensalidades.filter((item) => item.status === "Atrasada");
 					break;
 				case "search":
 					this.MensalidadesFiltered = this.Mensalidades.filter((item) => 

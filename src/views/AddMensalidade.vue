@@ -13,7 +13,7 @@
 										<span>valor</span>
 										<v-text-field
 										variant="outlined"
-										v-model="data.titulo"
+										v-model="data.valor"
 										type="number"
 										:rules="[ruleRequired]"
 										></v-text-field>
@@ -212,14 +212,14 @@ export default {
 					status: "Em Dia",
 					iduser: this.data.selectedUserId,
 				};
-
+				console.log("valor da mensalidade", payload.valor);
 				const response = await monthlyController.addMonthly(payload).then((response) => {
 					return response;
 				});
 				if (response.status === 201) {
 					statusCode.toastSuccess({
 						status: response.status,
-						statusText: "Projeto adicionado com sucesso",
+						statusText: "Mensalidade adicionada com sucesso!",
 					});
 					this.$router.push("/financas");
 				}
