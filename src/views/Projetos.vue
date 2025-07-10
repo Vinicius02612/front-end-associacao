@@ -285,8 +285,8 @@ export default {
             const year = date.getFullYear();
             return `${day}/${month}/${year}`;
         },
-		confirmDelete(id, name) {
-			this.userToDelete = { id, name };
+		confirmDelete(id, titulo) {
+			this.projetoToDelete = { id, titulo };
 			this.confirmDialog = true;
 		},
 		async deleteProjeto(id) {
