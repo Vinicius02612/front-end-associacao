@@ -279,7 +279,7 @@
 			</v-card-text>
 			<v-card-actions>
 				<v-spacer></v-spacer>
-				<v-btn color="grey" @click="editDialog = false">Cancelar</v-btn>
+				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
 				<v-btn color="primary" @click="confirmEdition(projetoToEdit.id)" :loading="editLoading">Confirmar Edição</v-btn>
 			</v-card-actions>
 		</v-card>
@@ -423,6 +423,7 @@ export default {
 			// Implement the logic to edit a project
 			try {
 				const response = await projectsControler.getProject(id).then((response) => {
+					console.log('Response from getProject:', response);
 					return response;
 				});
 				if (response.status === 200) {
