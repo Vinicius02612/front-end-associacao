@@ -130,9 +130,9 @@
 											location="bottom"
 											
 										>
-											Bloquear
+											Deletar
 										</v-tooltip>
-										<v-icon density="x-large">mdi-cancel</v-icon>
+										<v-icon size="x-large">mdi-trash-can-outline</v-icon>
 									</v-btn>
 								</v-btn-group>
 							</td>
