@@ -69,7 +69,7 @@
 				<v-table>
 					<thead>
 						<tr>
-							<th>Titulo</th>
+							<th>Nome</th>
 							<th>CPF</th>
 							<th>Data de Nascimento</th>
 							<th>Pessoas na Família</th>
