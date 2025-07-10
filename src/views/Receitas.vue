@@ -40,7 +40,7 @@
 				<v-card>
 					<v-card-title class="d-flex align-center justify-space-between">
 						Receitas
-						<v-btn append-icon="mdi-plus" color="primary" to="/financas/adicionar" variant="elevated">
+						<v-btn append-icon="mdi-plus" color="primary" to="financas/receitas/adicionar" variant="elevated">
 							Adicionar Receita
 						</v-btn>
 					</v-card-title>
