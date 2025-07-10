@@ -16,14 +16,14 @@ export default class ProjectsController {
   }
 
   async getProject(id) {
-    return await this.base._get(`${this.urlBase}/${id}`);
+    return await this.base._get(`${this.urlBase}${id}`);
   }
 
   async updateProject(id, body) {
-    return await this.base._patch(`${this.urlBase}/${id}`, body);
+    return await this.base._patch(`${this.urlBase}${id}`, body);
   }
 
   async deleteProject(id) {
-    return await this.base._delete(`${this.urlBase}/${id}`);
+    return await this.base._delete(`${this.urlBase}${id}`);
   }
 }
