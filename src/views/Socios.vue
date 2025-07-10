@@ -127,6 +127,7 @@
 										<v-tooltip
 											activator="parent"
 											location="bottom"
+											@click="deleteSocio(item.Id)"
 										>
 											Bloquear
 										</v-tooltip>
