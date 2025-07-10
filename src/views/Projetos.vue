@@ -132,7 +132,7 @@
 									<v-btn
 										width="32"
 										height="32"
-										@click="confirmDelete(item.Id, item.Nome)"
+										@click="confirmDelete(item.id, item.Titulo)"
 									>
 										<v-tooltip
 											activator="parent"
@@ -291,7 +291,7 @@ export default {
 		},
 		async deleteProjeto(id) {
 			try {
-				const response = await projectsControler.deleteProject(id).them((response) =>{
+				const response = await projectsControler.deleteProject(id).then((response) => {
 					return response;
 				});
 				if (response.status === 200) {
@@ -308,10 +308,19 @@ export default {
 					});
 				}
 			} catch (error) {
-				statusCode.toastError({
-					status: error.response ? error.response.status : 500,
-					statusText: error.message || 'Erro ao excluir o projeto',
-				});
+				// Check if it's a CORS error
+				if (error.message && error.message.includes('CORS')) {
+					statusCode.toastError({
+						status: 500,
+						statusText: 'Erro de CORS: O servidor precisa ser configurado para permitir requisições deste domínio',
+					});
+				} else {
+					statusCode.toastError({
+						status: error.response ? error.response.status : 500,
+						statusText: error.message || 'Erro ao excluir o projeto',
+					});
+				}
+				this.confirmDialog = false; // Fecha o diálogo mesmo em caso de erro
 			}
 		},
 	},
