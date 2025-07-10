@@ -415,6 +415,10 @@ export default {
 			this.confirmDialog = true;
 		},
 		async editProjeto(id) {
+			    console.log('--- Debugging ID ---');
+				console.log('Tipo do ID em editProjeto:', typeof id);
+				console.log('Valor do ID em editProjeto:', id);
+				console.log('--- Fim Debugging ID ---');
 			this.editLoading = true; // Set loading state to true
 			// Implement the logic to edit a project
 			try {
@@ -450,7 +454,9 @@ export default {
 				}
 				this.editDialog = true; // Open the dialog for editing
 			} catch (error) {
+				console.log(error);
 				statusCode.toastError({
+					
 					status: error.response ? error.response.status : 500,
 					statusText: error.message || 'Erro ao carregar projeto para edição',
 				});
