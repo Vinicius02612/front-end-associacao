@@ -417,37 +417,95 @@ export default {
 		async editProjeto(id) {
 			this.editLoading = true;
 			try {
-				const response = await projectsControler.getProject(id).then((response) => {
-					return response;
-				});
+				// Primeiro, tenta buscar da API
+				let projeto = null;
 				
-				if (response.status === 200) {
-					const projeto = response.body;
+				try {
+					const response = await projectsControler.getProject(id);
+					if (response.status === 200) {
+						projeto = response.body;
+					}
+				} catch (apiError) {
+					console.warn('Não foi possível buscar projeto da API, usando dados locais:', apiError);
+					// Se falhar, busca dos dados locais
+					projeto = this.projetos.find(p => p.id === id);
+					if (!projeto) {
+						throw new Error('Projeto não encontrado');
+					}
+					// Converte os dados locais para o formato esperado
+					projeto = {
+						id: projeto.id,
+						titulo: projeto.Titulo,
+						dtinicio: projeto.dataInicio,
+						dtfim: projeto.dataFim,
+						status: projeto.status
+					};
+				}
+				
+				if (projeto) {
 					this.projetoToEdit.id = projeto.id;
-					this.projetoToEdit.Titulo = projeto.titulo;
+					this.projetoToEdit.Titulo = projeto.titulo || projeto.Titulo;
 					
 					// Parse data de início
-					if (projeto.dtinicio) {
-						const [year, month, day] = projeto.dtinicio.split("-");
-						this.projetoToEdit.dataInicio = {
-							day: day || '',
-							month: month || '',
-							year: year || ''
-						};
+					let dataInicio = projeto.dtinicio || projeto.dataInicio;
+					if (dataInicio) {
+						// Se a data está no formato ISO (YYYY-MM-DD)
+						if (dataInicio.includes('-') && dataInicio.length === 10) {
+							const [year, month, day] = dataInicio.split("-");
+							this.projetoToEdit.dataInicio = {
+								day: day || '',
+								month: month || '',
+								year: year || ''
+							};
+						} else {
+							// Se a data está em outro formato, tenta converter
+							const date = new Date(dataInicio);
+							if (!isNaN(date.getTime())) {
+								this.projetoToEdit.dataInicio = {
+									day: String(date.getDate()).padStart(2, '0'),
+									month: String(date.getMonth() + 1).padStart(2, '0'),
+									year: String(date.getFullYear())
+								};
+							} else {
+								this.projetoToEdit.dataInicio = { day: '', month: '', year: '' };
+							}
+						}
+					} else {
+						this.projetoToEdit.dataInicio = { day: '', month: '', year: '' };
 					}
 					
 					// Parse data de fim
-					if (projeto.dtfim) {
-						const [year, month, day] = projeto.dtfim.split("-");
-						this.projetoToEdit.dataFim = {
-							day: day || '',
-							month: month || '',
-							year: year || ''
-						};
+					let dataFim = projeto.dtfim || projeto.dataFim;
+					if (dataFim) {
+						// Se a data está no formato ISO (YYYY-MM-DD)
+						if (dataFim.includes('-') && dataFim.length === 10) {
+							const [year, month, day] = dataFim.split("-");
+							this.projetoToEdit.dataFim = {
+								day: day || '',
+								month: month || '',
+								year: year || ''
+							};
+						} else {
+							// Se a data está em outro formato, tenta converter
+							const date = new Date(dataFim);
+							if (!isNaN(date.getTime())) {
+								this.projetoToEdit.dataFim = {
+									day: String(date.getDate()).padStart(2, '0'),
+									month: String(date.getMonth() + 1).padStart(2, '0'),
+									year: String(date.getFullYear())
+								};
+							} else {
+								this.projetoToEdit.dataFim = { day: '', month: '', year: '' };
+							}
+						}
+					} else {
+						this.projetoToEdit.dataFim = { day: '', month: '', year: '' };
 					}
 					
 					this.projetoToEdit.status = projeto.status || 'Em andamento';
 					this.editDialog = true;
+				} else {
+					throw new Error('Projeto não encontrado');
 				}
 			} catch (error) {
 				statusCode.toastError({
@@ -468,9 +526,10 @@ export default {
 					status: this.projetoToEdit.status
 				};
 
-				const response = await projectsControler.updateProject(this.projetoToEdit.id, payload).then((response) => {
-					return response;
-				});
+				console.log('Payload para edição:', payload);
+				console.log('ID do projeto:', this.projetoToEdit.id);
+
+				const response = await projectsControler.updateProject(this.projetoToEdit.id, payload);
 
 				if (response.status === 200) {
 					statusCode.toastSuccess({
@@ -486,10 +545,22 @@ export default {
 					});
 				}
 			} catch (error) {
+				console.error('Erro ao editar projeto:', error);
+				
 				if (error.message && error.message.includes('CORS')) {
 					statusCode.toastError({
 						status: 500,
 						statusText: 'Erro de CORS: O servidor precisa ser configurado para permitir requisições deste domínio',
+					});
+				} else if (error.response && error.response.status === 404) {
+					statusCode.toastError({
+						status: 404,
+						statusText: 'Projeto não encontrado. Ele pode ter sido removido por outro usuário.',
+					});
+				} else if (error.response && error.response.status === 400) {
+					statusCode.toastError({
+						status: 400,
+						statusText: 'Dados inválidos. Verifique se todas as informações estão corretas.',
 					});
 				} else {
 					statusCode.toastError({
