@@ -64,6 +64,13 @@ export class BaseController {
     } catch (error) {
       const retryInfo = retry || [uri, method, body, isForm];
 
+      // Check for CORS error
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        const corsError = new Error('CORS Error: O servidor precisa configurar as políticas CORS para permitir requisições deste domínio');
+        corsError.isCorsError = true;
+        throw corsError;
+      }
+
       if (error.response) {
         const response = error.response;
         const bodyText = await response.text();
