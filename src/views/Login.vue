@@ -54,7 +54,7 @@
 												density="compact"
 												:placeholder="$t('formData.login.password')"
 												variant="outlined"
-												:rules="[ruleRequired, rulePassword]"
+												:rules="[ rulePassword]"
 												@click:append-inner="visible = !visible"
 												v-model="password"
 												@keypress.space.prevent

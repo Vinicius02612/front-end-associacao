@@ -106,7 +106,7 @@
 								<tr>
 									<th>Titular</th>
 									<th>CPF</th>
-									<th>Data de Nascimento</th>
+									<th>Data de Vencimento</th>
 									<th>Cargo</th>
 									<th>Valor</th>
 									<th>Status</th>
