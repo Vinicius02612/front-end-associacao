@@ -453,6 +453,26 @@ export default {
 						}
 						
 				},
+				async deleteSocio(id){
+						// Implement the logic to delete a socio
+						try {
+								const response = await userController.deleteUser(id).then((response) => {
+										return response;
+								});
+								if (response.status === 200) {
+										statusCode.toastSuccess({
+												status: response.status,
+												statusText: "Sócio excluído com sucesso",
+										});
+										this.loadSocios(); // Reload the list of socios after deletion
+								}
+						} catch (error) {
+								statusCode.toastError({
+										status: error.response ? error.response.status : 500,
+										statusText: error.message || 'Erro ao excluir sócio',
+								});
+						}
+				},
 				async confirmEdition(id) {
 						// Implement the logic to confirm the edition of a socio
 						const payload = {
