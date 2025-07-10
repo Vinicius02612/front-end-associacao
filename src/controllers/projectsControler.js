@@ -20,7 +20,7 @@ export default class ProjectsController {
   }
 
   async updateProject(id, body) {
-    return await this.base._patch(`${this.urlBase}${id}`, body);
+    return await this.base._put(`${this.urlBase}${id}`, body);
   }
 
   async deleteProject(id) {
