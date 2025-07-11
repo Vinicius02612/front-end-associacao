@@ -23,7 +23,7 @@ export default class IncomeController {
 		return await this.base._put(`${this.urlBase}${id}`, body);
 	}
 
-	async deleteIncomet(id) {
+	async deleteIncome(id) {
 		return await this.base._delete(`${this.urlBase}${id}`);
 	}
 }
