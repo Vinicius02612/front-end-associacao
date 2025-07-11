@@ -27,7 +27,7 @@
 							stacked
 							to="/financas"
 						>
-							Mensalidades
+							Finanças
 						</v-btn>
 					</v-hover>
 					<v-hover v-slot:default="{ isHovering, props }">
