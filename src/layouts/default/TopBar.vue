@@ -1,6 +1,6 @@
 <template>
 	<v-app-bar color="white" elevation="1" height="64" z-index="0">
-		<div class="ma-2 " style="width: 14%; height: 100%; display: flex; align-items: center; padding: 20px;">
+		<div class="ma-2 " style="width: 25%; height: 100%; display: flex; align-items: center; padding: 20px;">
 			<h3>
 				{{ this.$route.name }}
 			</h3>
