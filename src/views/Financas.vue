@@ -4,34 +4,8 @@
 			<v-col cols="12">
 				<div class="d-flex justify-space-between align-center">
 					<div class="d-flex" width="50%">
-						<v-hover v-slot:default="{ isHovering, props }">
-							<v-card width="50%">
-								<v-card-title class="d-flex align-center justify-space-between">
-									Receita Total
-									<v-icon class="text-green">mdi-hand-coin-outline</v-icon>
-								</v-card-title>
-								<v-card-text>
-									<v-btn class="d-flex justify-space-between" variant="flat" width="100%" to="/financas/receitas">
-										<h2>R$ 768.39</h2>
-										<v-icon size="x-large">mdi-arrow-right</v-icon>
-									</v-btn>
-								</v-card-text>
-							</v-card>
-						</v-hover>
-						<v-hover v-slot:default="{ isHovering, props }">
-							<v-card class="ml-3">
-								<v-card-title class="d-flex align-center justify-space-between">
-									Despesa Total
-									<v-icon class="text-red">mdi-hand-coin-outline</v-icon>
-								</v-card-title>
-								<v-card-text>
-									<v-btn class="d-flex justify-space-between" variant="flat" width="100%" to="/financas/despesas">
-										<h2>R$ 457.89</h2>
-										<v-icon size="x-large">mdi-arrow-right</v-icon>
-									</v-btn>
-								</v-card-text>
-							</v-card>
-						</v-hover>
+						<Receita/>
+						<Despesa/>
 					</div>
 					<div class="d-flex">
 						<div class="d-flex">
@@ -181,6 +155,8 @@
 
 <script>
 import DateLabel from '@/components/ui/DateLabel.vue';
+import Receita from '@/components/ui/Receita.vue';
+import Despesa from '@/components/ui/Despesa.vue';
 import MonthlyController from '@/controllers/monthlyControler';
 import UserController from '@/controllers/userController';
 import statusCode from '@/helpers/statusCode';
@@ -193,6 +169,8 @@ export default {
 	name: 'Mensalidades',
 	components: {
 		DateLabel,
+		Receita,
+		Despesa,
 	},
 	data() {
 		return {
