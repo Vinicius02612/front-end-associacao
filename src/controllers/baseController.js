@@ -9,7 +9,7 @@ export class BaseController {
     this.UserStore = userStore;
     
     // Garantir que sempre use HTTPS
-    let baseUrl = "https://sistema-da-associacao.onrender.com/";
+    let baseUrl = "https://sistema-da-associacao.onrender.com";
     
     // Se houver uma variável de ambiente, use ela mas force HTTPS
     if (import.meta.env.VITE_API_URL) {
