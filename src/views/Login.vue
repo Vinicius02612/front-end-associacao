@@ -6,10 +6,20 @@
 					<v-row no-gutters class="fill-height w-100">
 						<v-col cols="12" md="7" class="">
 							<v-img
-							src="@/assets/LogScrImage.jpeg"
+							:src="LogScrImage"
 							class="w-100 h-100"
 							cover
-							></v-img>
+							@error="onImageError"
+							>
+								<template v-slot:placeholder>
+									<div class="d-flex align-center justify-center fill-height">
+										<v-progress-circular
+											color="grey-lighten-4"
+											indeterminate
+										></v-progress-circular>
+									</div>
+								</template>
+							</v-img>
 						</v-col>
 						<v-col cols="12" md="5" class="d-flex justify-center align-center">
 							<v-form  ref="login">
@@ -23,7 +33,7 @@
 										<v-col md="12">
 											<div class="login-card">
 												<div class="mt-5 mb-4 d-flex flex-column align-center">
-													<v-img src="@/assets/Logo1.png" min-width="450"/>
+													<v-img :src="Logo1" min-width="450"/>
 												</div>
 											</div>
 										</v-col>
@@ -38,7 +48,7 @@
 												:placeholder="$t('formData.login.email')"
 												variant="outlined"
 												density="compact"
-												:rules="[ruleRequired, ruleEmail]"
+												:rules="[ruleEmail]"
 												v-model="username"
 												type="email"
 												@keypress.space.prevent
@@ -54,7 +64,7 @@
 												density="compact"
 												:placeholder="$t('formData.login.password')"
 												variant="outlined"
-												:rules="[ rulePassword]"
+												:rules="[]"
 												@click:append-inner="visible = !visible"
 												v-model="password"
 												@keypress.space.prevent
@@ -81,11 +91,11 @@
 												<span class="text_btn" v-html="$t('button.login')"></span>
 											</v-btn>
 										</v-col>
-										<v-col class="mt-5 mb-4 d-flex flex-column align-center" md="12">
+										<!-- <v-col class="mt-5 mb-4 d-flex flex-column align-center" md="12">
 											<v-btn color="primary" variant="outlined" width="400" to="/register">
 												<span v-html="$t('formData.login.register')"></span>
 											</v-btn>
-										</v-col>
+										</v-col> -->
 									</v-row>
 								</v-card>
 							</v-form>
@@ -103,6 +113,8 @@
   import { goToGoogleLogin} from '@/services/auth.service';
   import AuthService from '@/controllers/authController';
   import statusCode from '@/helpers/statusCode';
+  import LogScrImage from '@/assets/LogScrImage.jpeg';
+  import Logo1 from '@/assets/Logo1.png';
 
   const userStore = useUserStore();
 	const authService = new AuthService();
@@ -114,13 +126,15 @@
         loading: false,
         loginMailSent: false,
         username: "",
-				password: "",
+		password: "",
         timer: 0,
 				alert: false,
 				valid: false,
 				ruleEmail,
 				rulePassword,
 				ruleRequired,
+				LogScrImage,
+				Logo1,
       }
     },
 
@@ -137,14 +151,15 @@
 					
 					this.loading = true;
 
+					// Começando com o formato mais comum (email/password)
 					const bodyLogin = { 
 						username: this.username,
-						password:this.password 
+						password: this.password 
 					};
 
-					const response = await authService.login(bodyLogin).then( async (res) => {
-						return res;
-					});
+					console.log('Tentando login com payload:', bodyLogin);
+
+					const response = await authService.login(bodyLogin);
 
 					console.log("response", response.body);
 
@@ -154,17 +169,24 @@
 					});
 				  
 					await authService.setUserLocalStorage(response.body)
-					window.location.href = "/";
+					// Usar router em vez de window.location para navegação
+					this.$router.push("/");
 					
 				}catch (error) {
+					console.error('Erro completo de login:', error);
 					statusCode.toastError(error);
 				}finally{	
 					this.loading = false;
 				}
-    	},
+    	},			
 			
 		resetPassword(){
 			this.$router.push("/forgot-password");
+		},
+
+		onImageError(event) {
+			console.error('Erro ao carregar imagem:', event);
+			// Você pode definir uma imagem de fallback aqui se quiser
 		},
 
 	},

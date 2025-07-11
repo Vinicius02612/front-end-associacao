@@ -1,6 +1,6 @@
 <template>
 	<v-app-bar color="white" elevation="1" height="64" z-index="0">
-		<div class="ma-2" style="width: 14%; height: 100%; display: flex; align-items: center;">
+		<div class="ma-2 " style="width: 14%; height: 100%; display: flex; align-items: center; padding: 20px;">
 			<h3>
 				{{ this.$route.name }}
 			</h3>
@@ -11,11 +11,13 @@
 
 		<v-menu location="bottom" transition="slide-y-transition">
 			<template v-slot:activator="{ props }">
-				<v-btn variant="text" v-bind="props" class="pa-2" height="64">
+				<v-btn variant="text" v-bind="props" class="pa-3" height="64">
 					<!-- <span class="mr-2">{{ user.name }}</span> -->
-					 <span>Aleff </span>
+					
 					<v-avatar
-						:image="user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=9CBFBB&color=fff`"></v-avatar>
+						:image="user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=9CBFBB&color=fff`">
+						Vinicius
+					</v-avatar>
 				</v-btn>
 			</template>
 
@@ -78,6 +80,10 @@ export default {
 	methods: {
 		goToHome() {
 			this.$router.push("/");
+		},
+		//pergar o usuario logado
+		getUser() {
+			return userStore.getUser;
 		},
 	},
 };

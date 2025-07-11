@@ -17,7 +17,8 @@ export const useUserStore = defineStore('user', {
       return this.token;
     },
     getIsLogged() {
-      return this.isLogged;
+      // Verifica se está logado ou se existe token no localStorage
+      return this.isLogged || !!localStorage.getItem('token');
     },
     getIsInstagram() {
       return this.isInstagram;
@@ -50,6 +51,14 @@ export const useUserStore = defineStore('user', {
     },
     setIsInstagram(isInstagram) {
       this.isInstagram = isInstagram;
+    },
+    logout() {
+      this.user = null;
+      this.token = null;
+      this.isLogged = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('refresh-token');
+      localStorage.removeItem('user');
     }
   },
 });

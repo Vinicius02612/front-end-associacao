@@ -93,14 +93,14 @@ const routes = [
 					},
 				],
 			},
-			{
-				path: "/login",
-				name: "LoginView",
-				component: () => import("@/views/Login.vue"),
-				meta: { requiresAuth: false, preload: true },
-			},
-    ],
-  },
+		],
+	},
+	{
+		path: "/login",
+		name: "Login",
+		component: () => import("@/views/Login.vue"),
+		meta: { requiresAuth: false, preload: true },
+	},
 ];
 
 const router = createRouter({
@@ -111,29 +111,30 @@ const router = createRouter({
   },
 });
 
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore();
+// Guard de navegação para proteger rotas
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
 
-//   if (!userStore.getIsLogged) {
-//     if (
-//       to.name === "Login" ||
-//       to.name === "Register" ||
-//       to.name === "ResetPassword" ||
-//       to.name === "ForgotPassword" ||
-//       to.name === "ConfirmPasswordEmail"
-//     ) {
-//       next();
-//     } else if (to.meta.requiresAuth) {
-//       next({ name: "Login" });
-//     } else {
-//       next();
-//     }
-//   } else {
-//     if (to.name === "Home") {
-//       next({ name: "Connections" });
-//     }
-//     next();
-//   }
-// });
+  // Verificar se o usuário está logado
+  if (!userStore.getIsLogged) {
+    // Se não está logado e tenta acessar uma rota protegida
+    if (to.meta.requiresAuth) {
+      // Redireciona para login
+      next({ name: "Login" });
+    } else {
+      // Permite acesso a rotas públicas (como login)
+      next();
+    }
+  } else {
+    // Se está logado
+    if (to.name === "Login") {
+      // Se já está logado e tenta acessar login, redireciona para home
+      next({ name: "Home" });
+    } else {
+      // Permite acesso normal
+      next();
+    }
+  }
+});
 
 export default router;

@@ -80,9 +80,10 @@
       },
 
       logout() {
-        localStorage.clear();
-        userStore.isLogged = false;
-				window.location = '/';
+        // Usar o método logout do store
+        userStore.logout();
+        // Usar router em vez de window.location
+        this.$router.push('/login');
       },
 
       async checkout() {

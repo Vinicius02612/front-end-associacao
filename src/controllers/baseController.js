@@ -70,12 +70,42 @@ export class BaseController {
       options.body = isForm ? qs.stringify(body) : JSON.stringify(body);
     }
 
+    // Log detalhado para debug
+    console.log('Requisição detalhada:', {
+      url,
+      method,
+      headers: options.headers,
+      body: options.body,
+      bodyObject: body
+    });
+
     try {
       const response = await fetch(url, options);
 
       if (!response.ok) {
+        // Log da resposta de erro
+        const errorText = await response.text();
+        console.error('Erro HTTP:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText,
+          url: url,
+          method: method
+        });
+        
+        // Tenta fazer o parse do JSON para ver se há detalhes específicos
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error('Detalhes do erro:', errorJson);
+        } catch (jsonError) {
+          console.error('Erro não é JSON válido:', errorText);
+        }
+        
         const error = new Error("HTTP Error");
         error.response = response;
+        error.responseText = errorText;
+        error.status = response.status;
+        error.statusText = response.statusText;
         throw error;
       }
 

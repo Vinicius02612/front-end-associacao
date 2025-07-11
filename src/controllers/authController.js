@@ -3,7 +3,7 @@ import BaseController from "./baseController";
 
 export default class AuthService {
 	userStore = useUserStore()
-  urlBase = "/login/";
+  urlBase = "/auth/";
 
   constructor() {
     this.base = new BaseController(this.userStore);
@@ -23,7 +23,48 @@ export default class AuthService {
   }
 
   async login(data) {
-    return this.base._post(`${this.urlBase}auth`, data, true);
+    console.log('Dados de login enviados:', data);
+    
+    // Teste 1: JSON para /auth/login
+    try {
+      console.log('Teste 1: JSON para /auth/login');
+      const response = await this.base._post('/auth/login', data, false);
+      console.log('Sucesso com JSON para /auth/login');
+      return response;
+    } catch (error) {
+      console.log('Erro com JSON para /auth/login:', error.status, error.statusText);
+    }
+    
+    // Teste 2: Form-urlencoded para /auth/login
+    try {
+      console.log('Teste 2: Form-urlencoded para /auth/login');
+      const response = await this.base._post('/auth/login', data, true);
+      console.log('Sucesso com form-urlencoded para /auth/login');
+      return response;
+    } catch (error) {
+      console.log('Erro com form-urlencoded para /auth/login:', error.status, error.statusText);
+    }
+    
+    // Teste 3: JSON para /login/auth
+    try {
+      console.log('Teste 3: JSON para /login/auth');
+      const response = await this.base._post('/login/auth', data, false);
+      console.log('Sucesso com JSON para /login/auth');
+      return response;
+    } catch (error) {
+      console.log('Erro com JSON para /login/auth:', error.status, error.statusText);
+    }
+    
+    // Teste 4: Form-urlencoded para /login/auth
+    try {
+      console.log('Teste 4: Form-urlencoded para /login/auth');
+      const response = await this.base._post('/login/auth', data, true);
+      console.log('Sucesso com form-urlencoded para /login/auth');
+      return response;
+    } catch (error) {
+      console.log('Erro com form-urlencoded para /login/auth:', error.status, error.statusText);
+      throw error; // Lança o último erro se todos falharem
+    }
   }
 
   async logout() {
@@ -65,7 +106,16 @@ export default class AuthService {
 
   async setUserLocalStorage(data) {
     try {
-			this.userStore.setUser(data)
+      // Define o usuário no store
+      this.userStore.setUser(data.user || data);
+      
+      // Se houver tokens na resposta, salva eles
+      if (data.tokens) {
+        await this.userStore.setToken(data.tokens);
+      }
+      
+      // Marca como logado
+      this.userStore.setIsLogged(true);
     } catch (err) {
       throw new Error(err);
     }
