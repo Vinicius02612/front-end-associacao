@@ -207,10 +207,7 @@
 	},
 
     computed: {
-
-      showGoogle() {
-        return !userStore.isInstagram;
-      },  
+ 
     },
   };
 </script>

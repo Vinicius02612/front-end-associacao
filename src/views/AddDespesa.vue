@@ -4,7 +4,7 @@
 			<v-col cols="12">
 				<v-card class="align-center justify-center">
 					<v-card-title class="align-start justify-start">
-						Adicionar Receita
+						Adicionar Despesa
 					</v-card-title>
 					<v-card-text>
 							<div class="d-flex align-center justify-center" style="width: 100%;">
@@ -91,10 +91,10 @@
 import DateLabel from '@/components/ui/DateLabel.vue';
 import { VDateInput } from 'vuetify/labs/VDateInput'
 import { ruleRequired} from '@/helpers/RulesHelper';
-import IncomeController from '@/controllers/incomeControler';
+import CostController from '@/controllers/costsControlles';
 import statusCode from '@/helpers/statusCode';
 
-const incomeControler = new IncomeController();
+const costControler = new CostController();
 
 export default {
 	name: 'Socios',
@@ -123,14 +123,14 @@ export default {
 
 		async addReceita() {
 			try {
-				const response = await incomeControler.addIncome({
+				const response = await costControler.addCost({
 					valor: parseFloat(this.data.valor),
 					data: `${this.data.year}-${this.data.month}-${this.data.day}`,
 					origem: this.data.origem,
 				});
 				if (response.status === 201) {
 					statusCode.toastSuccess("Receita adicionada com sucesso!");
-					this.$router.push('/financas/receitas');
+					this.$router.push('/financas/despesas');
 				} else {
 					statusCode.toastError("Erro ao adicionar receita.");
 				}

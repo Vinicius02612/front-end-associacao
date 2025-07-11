@@ -1,29 +1,29 @@
 import BaseController from "./baseController";
 
-export default class IncomeController {
-	urlBase = "/receitas/";
+export default class CostController {
+	urlBase = "/despesas/";
 
 	constructor() {
 		this.base = new BaseController(this.userStore);
 	}
 
-	async addIncome(body) {
+	async addCost(body) {
 		return await this.base._post(`${this.urlBase}`, body);
 	}
 
-	async getIncomes() {
+	async getCosts() {
 		return await this.base._get(`${this.urlBase}`);
 	}
 
-	async getIncome(id) {
+	async getCost(id) {
 		return await this.base._get(`${this.urlBase}${id}`);
 	}
 
-	async updateIncome(id, body) {
+	async updateCost(id, body) {
 		return await this.base._put(`${this.urlBase}${id}`, body);
 	}
 
-	async deleteIncome(id) {
+	async deleteCost(id) {
 		return await this.base._delete(`${this.urlBase}${id}`);
 	}
 }

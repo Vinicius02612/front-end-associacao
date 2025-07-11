@@ -4,34 +4,8 @@
 			<v-col cols="12">
 				<div class="d-flex justify-space-between align-center">
 					<div class="d-flex" width="50%">
-						<v-hover v-slot:default="{ isHovering, props }">
-							<v-card width="50%">
-								<v-card-title class="d-flex align-center justify-space-between">
-									Receita Total
-									<v-icon class="text-green">mdi-hand-coin-outline</v-icon>
-								</v-card-title>
-								<v-card-text>
-									<v-btn class="d-flex justify-space-between" variant="flat" width="100%" to="/financas/receitas">
-										<h2>R$ 768.39</h2>
-										<v-icon size="x-large">mdi-arrow-right</v-icon>
-									</v-btn>
-								</v-card-text>
-							</v-card>
-						</v-hover>
-						<v-hover v-slot:default="{ isHovering, props }">
-							<v-card class="ml-3">
-								<v-card-title class="d-flex align-center justify-space-between">
-									Despesa Total
-									<v-icon class="text-red">mdi-hand-coin-outline</v-icon>
-								</v-card-title>
-								<v-card-text>
-									<v-btn class="d-flex justify-space-between" variant="flat" width="100%" to="/financas/despesas">
-										<h2>R$ {{totalDespesas}}</h2>
-										<v-icon size="x-large">mdi-arrow-right</v-icon>
-									</v-btn>
-								</v-card-text>
-							</v-card>
-						</v-hover>
+						<Receita/>
+						<Despesa/>
 					</div>
 				</div>
 			</v-col>
@@ -40,7 +14,7 @@
 				<v-card>
 					<v-card-title class="d-flex align-center justify-space-between">
 						Despesas
-						<v-btn append-icon="mdi-plus" color="primary" to="/financas/adicionar" variant="elevated">
+						<v-btn append-icon="mdi-plus" color="primary" to="despesas/adicionar" variant="elevated">
 							Adicionar Despesa
 						</v-btn>
 					</v-card-title>
@@ -74,6 +48,7 @@
 									<v-btn
 										width="32"
 										height="32"
+										@click="despesaEdit(item)"
 									>
 										<v-tooltip
 											activator="parent"
@@ -86,6 +61,7 @@
 									<v-btn
 										width="32"
 										height="32"
+										@click="deleteDespesa(item)"
 									>
 										<v-tooltip
 											activator="parent"
@@ -105,44 +81,205 @@
 			</v-col>
 			
 		</v-row>
-	</v-container>	
+	</v-container>
+
+	<v-dialog v-model="dialog" max-width="1300px">
+		<v-card>
+			<v-card-title class="headline">Editar Despesa</v-card-title>
+			<v-card class="align-center justify-center">
+					<v-card-text>
+							<div class="d-flex align-center justify-center" style="width: 100%;">
+								<v-row class="mt-0 ml-0 mr-0 align-start justify-center" :gutter="1">
+									<v-col cols="4">
+										<span>Valor</span>
+										<v-text-field
+										variant="outlined"
+										v-model="recToEdit.valor"
+										type="number"
+										:rules="[ruleRequired]"
+										></v-text-field>
+
+										<span>Origem</span>
+										<v-text-field
+										variant="outlined"
+										v-model="recToEdit.origem"
+										type="text"
+										:rules="[ruleRequired]"
+										></v-text-field>
+									</v-col>
+
+									<v-col cols="4">
+										<span>Data</span>
+										<div class="d-flex align-center justify-center" style="width: 100%;">
+
+												<v-row dense>
+													<v-col cols="4">
+														<v-text-field
+															variant="outlined"
+															v-model="recToEdit.day"
+															label="Dia"
+															type="number"
+															:min="1"
+															:max="31"
+															:rules="[ruleRequired]"
+														>
+														</v-text-field>
+													</v-col>
+													<v-col cols="4">
+														<v-text-field
+															variant="outlined"
+															v-model="recToEdit.month"
+															label="Mês"
+															type="number"
+															:min="1"
+															:max="12"
+															:rules="[ruleRequired]"
+														>
+														</v-text-field>
+													</v-col>
+													<v-col cols="4">
+														<v-text-field
+															variant="outlined"
+															v-model="recToEdit.year"
+															label="Ano"
+															type="number"
+															:min="1900"
+															:max="2100"
+															:rules="[ruleRequired]"
+														>
+														</v-text-field>
+													</v-col>
+												</v-row>
+											</div>
+									</v-col>
+									<v-col class="d-flex align-center justify-center" cols="8">
+										<v-btn color="primary" class="ma-2" @click="confirmEdition()" >
+											Confirmar Edição
+										</v-btn>
+									</v-col>
+								</v-row>
+
+							</div>
+					</v-card-text>
+				</v-card>
+			<v-card-actions>
+				<v-btn color="primary" @click="dialog = false">Fechar</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+
+	<!-- Confirmation Dialog for Deletion -->
+	<v-dialog v-model="confirmDialog" max-width="500px">
+		<v-card>
+			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
+			<v-card-text>
+				Tem certeza que deseja remover o projeto <strong>{{ projToDelete.titulo }}</strong>?
+				<br><br>
+				<v-alert color="warning" variant="outlined" class="mt-3">
+					Esta ação não pode ser desfeita.
+				</v-alert>
+			</v-card-text>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
+				<v-btn color="red" @click="deleterProjeto(projToDelete.id); confirmDialog = false">Confirmar</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script>
 import DateLabel from '@/components/ui/DateLabel.vue';
+import CostController from '@/controllers/costsControlles';
+import Receita from '@/components/ui/Receita.vue';
+import Despesa from '@/components/ui/Despesa.vue';
+import { ruleRequired } from '@/helpers/RulesHelper';
+
+const costController = new CostController();
 
 export default {
-	name: 'receitas',
+	name: 'despesas',
 	components: {
 		DateLabel,
+		Receita,
+		Despesa,
 	},
 	data() {
 		return {
 			message: 'Hello, Vue!',
-			Despesas: [
-									{ id: 1, Origem: "Gasto com material de limpesa", Data: "2025-05-01", Valor: 45.50 },
-									{ id: 3, Origem: "Gasto com material de limpesa", Data: "2025-05-03", Valor: 32.75 },
-									{ id: 5, Origem: "Gasto com material de limpesa", Data: "2025-05-05", Valor: 68.90 },
-									{ id: 7, Origem: "Gasto com material de limpesa", Data: "2025-05-07", Valor: 40.00 },
-									{ id: 9, Origem: "Gasto com material de limpesa", Data: "2025-05-09", Valor: 35.20 },
-									{ id: 11, Origem: "Gasto com material de limpesa", Data: "2025-05-11", Valor: 55.00 },
-									{ id: 13, Origem: "Gasto com material de limpesa", Data: "2025-05-13", Valor: 65.99 },
-									{ id: 15, Origem: "Gasto com material de limpesa", Data: "2025-05-15", Valor: 47.30 },
-									{ id: 17, Origem: "Gasto com material de limpesa", Data: "2025-05-17", Valor: 28.45 },
-									{ id: 19, Origem: "Gasto com material de limpesa", Data: "2025-05-19", Valor: 38.80 },
-								],
-			DespesasFiltered: null,
+			Despesas: [],
+			DespesasFiltered: [],
 			filters: {
 				selected: "all",
 				},
+			recToEdit: null,
+			dialog: false,
+			editLoading: false,
+			confirmDialog: false,
+			recToDelete: null,
+			ruleRequired,
 		};
 	},
-	mounted(){
+	async mounted(){
+		await this.loadDespesas();
 		this.filterDespesas();
 	},
 	methods: {
 		greet() {
 			alert(this.message);
+		},
+		async loadDespesas() {
+			try {
+				const response = await costController.getCosts();
+				// Verifica se a resposta é bem-sucedida
+				if (response.status === 200) {
+					this.Despesas = response.body.map(item => ({
+						id: item.id,
+						Origem: item.origem,
+						Data: item.data,
+						Valor: item.valor,
+					}));
+					this.filterDespesas();
+				} else {
+					console.error('Erro ao carregar Despesas:', response.statusText);
+				}
+			} catch (error) {
+				console.error('Erro ao carregar Despesas:', error);
+			}
+		},
+		despesaEdit(item) {
+			this.editLoading = true;
+			const [year, month, day] = item.Data.split('-');
+			this.recToEdit = {
+				id: item.id,
+				valor: item.Valor,
+				origem: item.Origem,
+				day: day,
+				month: month,
+				year: year,
+			};
+
+			this.dialog = true;
+		},
+
+		async confirmEdition() {
+			try {
+				const payload = {
+					valor: parseFloat(this.recToEdit.valor),
+					data: `${this.recToEdit.year}-${this.recToEdit.month}-${this.recToEdit.day}`,
+					origem: this.recToEdit.origem,
+				};
+				const response = await costController.updateCost(this.recToEdit.id, payload);
+				if (response.status === 200) {
+					this.dialog = false;
+					this.editLoading = false;
+				} else {
+					console.error('Erro ao atualizar despesa:', response.statusText);
+				}
+			} catch (error) {
+				console.error('Erro ao atualizar despesa:', error);
+			}
+			await this.loadDespesas();
 		},
 		filterDespesas() {
 			switch (this.filters.selected) {
@@ -151,10 +288,22 @@ export default {
 					break;
 			}
 		},
-	},
-	computed: {
-		totalDespesas() {
-			return this.Despesas.reduce((total, despesa) => total + despesa.Valor, 0).toFixed(2);
+		deleteDespesa(item) {
+			this.confirmDialog = true;
+			this.projToDelete = item;
+		},
+		async deleterProjeto(id) {
+			try {
+				const response = await costController.deleteCost(id);
+				if (response.status === 200) {
+					this.confirmDialog = false;
+					this.loadDespesas();
+				} else {
+					console.error('Erro ao excluir despesa:', response.statusText);
+				}
+			} catch (error) {
+				console.error('Erro ao excluir despesa:', error);
+			}
 		},
 	},
 };

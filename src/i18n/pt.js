@@ -327,7 +327,7 @@ export default {
     home: "Inicio",
 		partners: "Sócios",
 		projects: "Projetos",
-		mensality: "Mensalidades",
+		mensality: "Financeiro",
   },
   footer: {
     terms: "Termos e Políticas",
