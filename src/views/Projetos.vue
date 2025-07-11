@@ -516,7 +516,6 @@ export default {
 							statusText: "Projeto editado com sucesso",
 						});
 						this.dialog = false;
-						this.loadProjetos();
 				})
 			} catch (error) {
 				statusCode.toastError(error);

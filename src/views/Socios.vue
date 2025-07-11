@@ -527,21 +527,21 @@ export default {
 										status: response.status,
 										statusText: "Sócio editado com sucesso",
 								});
-								this.dialog = false; // Close the dialog
-								this.loadSocios(); // Reload the list of socios
+								this.dialog = false; // Close the dialog // Reload the list of socios
 						})
 						.catch(error => {
 								statusCode.toastError({
 										status: error.response ? error.response.status : 500,
 										statusText: error.message || 'Erro ao editar sócio',
 								});
-						}).finally(() =>
+						}).finally(async () =>
 							{
 								this.editLoading = false; // Reset loading state after the operation
 								this.dialog = false; // Close the dialog after editing
+								await this.loadSocios(); // Reload the list of socios to reflect changes
+								this.filterSocios(); // Reapply filters after editing
 							}
 						);
-						await this.loadSocios(); // Reload the list of socios to reflect changes
 				}
 		},
 		watch: {
