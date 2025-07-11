@@ -72,7 +72,7 @@
 											</div>
 									</v-col>
 									<v-col class="d-flex align-center justify-center" cols="8">
-										<v-btn color="primary" class="ma-2" @click="addProjeto" >
+										<v-btn color="primary" class="ma-2" @click="addReceita()" >
 											Adicionar
 										</v-btn>
 									</v-col>
