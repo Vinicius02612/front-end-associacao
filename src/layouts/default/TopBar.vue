@@ -12,12 +12,7 @@
 		<v-menu location="bottom" transition="slide-y-transition">
 			<template v-slot:activator="{ props }">
 				<v-btn variant="text" v-bind="props" class="pa-3" height="64">
-					<!-- <span class="mr-2">{{ user.name }}</span> -->
-					
-					<v-avatar
-						:image="user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=9CBFBB&color=fff`">
-						Vinicius
-					</v-avatar>
+					{{ user.name || 'Usuário' }}
 				</v-btn>
 			</template>
 
@@ -28,34 +23,6 @@
 					</template>
 					<v-list-item-title>Perfil</v-list-item-title>
 				</v-list-item> -->
-
-				<v-list-item to="/user/edit" link>
-					<template v-slot:prepend>
-						<v-icon>mdi-account-circle-outline</v-icon>
-					</template>
-					<v-list-item-title>Dados da Conta</v-list-item-title>
-				</v-list-item>
-
-				<v-list-item link>
-					<template v-slot:prepend>
-						<v-icon>mdi-help-circle-outline</v-icon>
-					</template>
-					<v-list-item-title>Ajuda e Suporte</v-list-item-title>
-				</v-list-item>
-
-				<v-list-item link>
-					<template v-slot:prepend>
-						<v-icon>mdi-account-switch-outline</v-icon>
-					</template>
-					<v-list-item-title>Trocar de Conta</v-list-item-title>
-				</v-list-item>
-
-				<v-list-item link>
-					<template v-slot:prepend>
-						<v-icon>mdi-information-outline</v-icon>
-					</template>
-					<v-list-item-title>Sobre o Sistema</v-list-item-title>
-				</v-list-item>
 			</v-list>
 		</v-menu>
 	</v-app-bar>
