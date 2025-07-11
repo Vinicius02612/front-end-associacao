@@ -22,9 +22,7 @@ export class BaseController {
     }
     
     this.url = baseUrl;
-    
-    // Log para debug
-    console.log('BaseController URL configurada:', this.url);
+
   }
 
   urlFull(uri) {
@@ -71,13 +69,6 @@ export class BaseController {
     }
 
     // Log detalhado para debug
-    console.log('Requisição detalhada:', {
-      url,
-      method,
-      headers: options.headers,
-      body: options.body,
-      bodyObject: body
-    });
 
     try {
       const response = await fetch(url, options);
