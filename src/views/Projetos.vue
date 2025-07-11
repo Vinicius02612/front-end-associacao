@@ -134,6 +134,8 @@
 									<v-btn
 										width="32"
 										height="32"
+										@click="confirmDelete(item.id, item.Titulo)"
+										:loading="deleteLoading"
 									>
 										<v-tooltip
 											activator="parent"
@@ -280,6 +282,25 @@
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
+
+	<!-- Confirmation Dialog for Deletion -->
+	<v-dialog v-model="confirmDialog" max-width="500px">
+		<v-card>
+			<v-card-title class="headline">Confirmar Exclusão</v-card-title>
+			<v-card-text>
+				Tem certeza que deseja remover o projeto <strong>{{ projToDelete.titulo }}</strong>?
+				<br><br>
+				<v-alert color="warning" variant="outlined" class="mt-3">
+					Esta ação não pode ser desfeita.
+				</v-alert>
+			</v-card-text>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="grey" @click="confirmDialog = false">Cancelar</v-btn>
+				<v-btn color="red" @click="deleterProjeto(projToDelete.id); confirmDialog = false">Confirmar</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script>
@@ -302,6 +323,7 @@ export default {
 			message: 'Hello, Vue!',
 			projetos: [ ],
 			projetosFiltered: null,
+			confirmDialog: false,
 			filters: {
 				selected: "all",
 				search: "",
@@ -319,6 +341,10 @@ export default {
 					year: "",
 				},
 				user: "",
+			},
+			projToDelete: {
+				id: null,
+				titulo: "",
 			},
 			dialog: false,
 			editLoading: false,
@@ -499,7 +525,29 @@ export default {
 			this.filterProjetos();
 
 		},
+		confirmDelete(id,titulo) {
+			this.projToDelete = {id, titulo};
+			this.confirmDialog = true;
+		},
+		async deleterProjeto(id){
+			try {
+				const response = await projectsControler.deleteProject(id).then((response) => {
+					return response;
+				});
+				if (response.status === 200) {
+					statusCode.toastSuccess({
+						status: response.status,
+						statusText: "Projeto deletado com sucesso",
+					});
+					this.loadProjetos();
+					this.filterProjetos();
+				} 
+			} catch (error) {
+				statusCode.toastError(error);
+			}
+		}
 	},
+
 	watch: {
 		"filters.search"() {
 			console.log(this.filters.search);

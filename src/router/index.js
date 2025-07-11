@@ -111,6 +111,10 @@ const router = createRouter({
   },
 });
 
+// Uma variável para controlar se a verificação inicial de autenticação já foi feita
+// Isso evita múltiplos redirecionamentos no carregamento inicial
+let isInitialAuthCheckDone = false;
+
 // Guard de navegação para proteger rotas
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();

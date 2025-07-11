@@ -151,7 +151,7 @@
 					
 					this.loading = true;
 
-					// Começando com o formato mais comum (email/password)
+					// Formato de payload para o login
 					const bodyLogin = { 
 						username: this.username,
 						password: this.password 
@@ -161,21 +161,36 @@
 
 					const response = await authService.login(bodyLogin);
 
-					console.log("response", response.body);
+					if (response && response.body) {
+						console.log("Login bem-sucedido, response:", response.body);
 
-					statusCode.toastSuccess({
-						status: response.status,
-						statusText: "loginSuccess",
-					});
-				  
-					await authService.setUserLocalStorage(response.body)
-					// Usar router em vez de window.location para navegação
-					this.$router.push("/");
+						statusCode.toastSuccess({
+							status: response.status,
+							statusText: "loginSuccess",
+						});
 					
-				}catch (error) {
+						await authService.setUserLocalStorage(response.body);
+						
+						// Usar router em vez de window.location para navegação
+						this.$router.push("/");
+					} else {
+						throw new Error("Resposta inválida do servidor");
+					}
+					
+				} catch (error) {
 					console.error('Erro completo de login:', error);
+					
+					// Tratamento específico para diferentes tipos de erro
+					if (error.status === 401) {
+						console.error('Credenciais inválidas');
+					} else if (error.status === 422) {
+						console.error('Dados de login inválidos');
+					} else if (error.status === 500) {
+						console.error('Erro interno do servidor');
+					}
+					
 					statusCode.toastError(error);
-				}finally{	
+				} finally {	
 					this.loading = false;
 				}
     	},			
