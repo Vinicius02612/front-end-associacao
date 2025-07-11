@@ -87,9 +87,20 @@ const routes = [
 					},
 					{
 						path: "despesas",
-						name: "Despesas",
-						component: () => import("@/views/Despesas.vue"),
-						meta: { requiresAuth: true, preload: true },
+						children: [
+							{
+								path: "",
+								name: "Despesas",
+								component: () => import("@/views/Despesas.vue"),
+								meta: { requiresAuth: true, preload: true },
+							},
+							{
+								path: "adicionar",
+								name: "Adicionar Despesa",
+								component: () => import("@/views/AddDespesa.vue"),
+								meta: { requiresAuth: true, preload: true },
+							}
+						],
 					},
 				],
 			},
