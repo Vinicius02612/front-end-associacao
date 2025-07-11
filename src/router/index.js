@@ -119,6 +119,7 @@ let isInitialAuthCheckDone = false;
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
 
+	console.log("Verificando autenticação...", userStore.getIsLogged, userStore?.getUser);
   // Verificar se o usuário está logado
   if (!userStore.getIsLogged) {
     // Se não está logado e tenta acessar uma rota protegida

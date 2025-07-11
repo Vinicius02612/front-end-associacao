@@ -7,7 +7,6 @@
 // Plugins
 import { loadFonts } from './webfontloader'
 import vuetify from './vuetify'
-import pinia from '../store'
 import router from '../router' 
 import VueConfetti from 'vue-confetti'
 
@@ -18,8 +17,10 @@ import 'vue3-toastify/dist/index.css';
 import messages from '../i18n/index.js';
 
 import { createI18n } from 'vue-i18n';
+import { registerPinia } from './pinia'
 
 export function registerPlugins (app) {
+	registerPinia(app)
   loadFonts()
   app
     .use(createI18n({
@@ -34,5 +35,4 @@ export function registerPlugins (app) {
     })
     .use(vuetify)
     .use(router)
-    .use(pinia)
 }

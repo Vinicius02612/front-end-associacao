@@ -22,8 +22,8 @@ export const useUserStore = defineStore('user', {
     },
     getIsInstagram() {
       return this.isInstagram;
-    }
-  },
+    },
+	},
 
   actions: {
     setUser(user) {
@@ -61,4 +61,5 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('user');
     }
   },
+	persist: true,
 });
